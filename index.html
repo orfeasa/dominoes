@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Point your camera at dominoes and count every visible pip on your device." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Pip Count</title>
+    <script>
+      window.__opencvReady = new Promise((resolve, reject) => {
+        window.Module = {
+          onRuntimeInitialized() {
+            // OpenCV exposes a `then` method on the module. Remove it before
+            // resolving so native Promise assimilation cannot recurse forever.
+            delete window.Module.then;
+            resolve(window.Module);
+          },
+        };
+        window.setTimeout(() => reject(new Error("The detector took too long to load.")), 30000);
+      });
+    </script>
+    <script src="./vendor/opencv.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#score-controls">Skip to score controls</a>
+    <main class="app-shell" id="main-content">
+      <section class="camera-stage" id="camera-stage" aria-label="Camera view">
+        <video id="camera" autoplay muted playsinline aria-label="Live rear camera"></video>
+        <canvas id="photo-canvas" class="photo-canvas" aria-hidden="true"></canvas>
+        <canvas id="detection-canvas" class="detection-canvas" aria-hidden="true"></canvas>
+        <canvas id="analysis-canvas" hidden></canvas>
+
+        <header class="top-bar">
+          <div class="brand-lockup" aria-label="Pip Count">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>Pip Count</span>
+          </div>
+          <span class="privacy-note">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3m-9 0h8a2 2 0 0 1 2 2v7H6v-7a2 2 0 0 1 2-2Z" /></svg>
+            On device
+          </span>
+        </header>
+
+        <div class="aiming-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+        <div class="camera-gate" id="camera-gate">
+          <div class="gate-copy">
+            <h1>Count the pips</h1>
+            <p id="gate-message">Lay Double-12 or smaller dominoes face-up with a little space between them.</p>
+          </div>
+          <button class="primary-button" id="start-camera" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.2-2h5.6L16 6h2a2 2 0 0 1 2 2v10H4V8Zm8 8.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /></svg>
+            Start camera
+          </button>
+          <label class="text-button" for="photo-input">Choose a photo instead</label>
+        </div>
+      </section>
+
+      <section class="score-dock" id="score-controls" aria-labelledby="score-label">
+        <div class="secondary-actions">
+          <label class="icon-button" for="photo-input" title="Choose a photo">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v14H4V5Zm3 11 3.5-4 2.5 3 2-2 2 3H7Zm1-6.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /></svg>
+            <span class="sr-only">Choose a photo</span>
+          </label>
+          <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+          <button class="icon-button" id="torch-button" type="button" title="Turn flash on" hidden>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m13.2 2-7 11h5.4L10.8 22l7-12h-5.4l.8-8Z" /></svg>
+            <span class="sr-only">Turn flash on</span>
+          </button>
+        </div>
+
+        <div class="score-readout">
+          <output id="score" aria-labelledby="score-label">0</output>
+          <span id="score-label">score</span>
+        </div>
+
+        <div class="status-line" id="status-line" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="status-text">Camera not started</span>
+        </div>
+
+        <button class="primary-button freeze-button" id="freeze-button" type="button" disabled>Freeze score</button>
+
+        <div class="frozen-controls" id="frozen-controls" hidden>
+          <div class="adjuster" aria-label="Correct score">
+            <button id="decrement-score" type="button" aria-label="Subtract one from score">−</button>
+            <span>Correct if needed</span>
+            <button id="increment-score" type="button" aria-label="Add one to score">+</button>
+          </div>
+          <button class="secondary-button" id="scan-again" type="button">Scan again</button>
+        </div>
+      </section>
+    </main>
+
+    <noscript>This app needs JavaScript to use the camera and count pips.</noscript>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

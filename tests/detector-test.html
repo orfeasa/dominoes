@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Detector tests running</title>
+    <style>
+      body { margin: 0; padding: 32px; background: #0a0a0a; color: #fff; font: 18px system-ui; }
+      h1 { margin-top: 0; }
+      li { margin: 12px 0; }
+      .pass { color: #5bd879; }
+      .fail { color: #ff7c6f; }
+      canvas { display: block; width: min(100%, 640px); height: auto; margin: 12px 0 32px; }
+    </style>
+    <script>
+      window.__opencvReady = new Promise((resolve, reject) => {
+        window.Module = {
+          onRuntimeInitialized() {
+            delete window.Module.then;
+            resolve(window.Module);
+          },
+        };
+        window.setTimeout(() => reject(new Error("OpenCV timeout")), 30000);
+      });
+    </script>
+    <script src="../vendor/opencv.js"></script>
+  </head>
+  <body>
+    <h1>Pip detector regression</h1>
+    <ol id="results"><li>Running…</li></ol>
+    <div id="fixtures"></div>
+    <script type="module">
+      import { PipDetector } from "../vision.js?v=16";
+
+      const cases = [
+        { path: "./fixtures/double-twelve.svg", expected: 24 },
+        { path: "./fixtures/double-six-set.png", expected: 168 },
+        { path: "./fixtures/table-score-100.jpg", expected: 100 },
+        // An observational fixture only: the source app's labels cover pips.
+        { path: "./fixtures/labelled-reference.jpg", expected: null },
+      ];
+      const cv = await window.__opencvReady;
+      const detector = new PipDetector(cv);
+      const output = document.querySelector("#results");
+      const fixtures = document.querySelector("#fixtures");
+      const rows = [];
+
+      for (const test of cases) {
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("aria-label", test.path);
+        const debugCanvas = document.createElement("canvas");
+        debugCanvas.setAttribute("aria-label", `${test.path} threshold`);
+        const context = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
+        const image = new Image();
+        image.src = test.path;
+        await image.decode();
+        // Match the fixed live-analysis width used on phones.
+        const scale = Math.min(1, 540 / image.naturalWidth);
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        const startedAt = performance.now();
+        const result = detector.detect(canvas, debugCanvas);
+        const durationMs = Math.round(performance.now() - startedAt);
+        context.lineWidth = 2;
+        context.strokeStyle = "#5bd879";
+        for (const detection of result.detections) {
+          context.beginPath();
+          context.arc(detection.x, detection.y, detection.radius + 3, 0, Math.PI * 2);
+          context.stroke();
+        }
+        fixtures.append(canvas);
+        fixtures.append(debugCanvas);
+        rows.push({
+          ...test,
+          actual: result.count,
+          durationMs,
+          pass: test.expected === null || result.count === test.expected,
+          detections: result.detections,
+          diagnostics: result.diagnostics,
+        });
+      }
+
+      output.replaceChildren(
+        ...rows.map((row) => {
+          const item = document.createElement("li");
+          item.className = row.pass ? "pass" : "fail";
+          item.textContent = row.expected === null
+            ? `${row.path}: observed ${row.actual} visible contours in ${row.durationMs}ms (labels obscure the source)`
+            : `${row.path}: expected ${row.expected}, counted ${row.actual} in ${row.durationMs}ms`;
+          return item;
+        }),
+      );
+      const passed = rows.every((row) => row.pass);
+      document.body.dataset.complete = "true";
+      document.body.dataset.passed = String(passed);
+      document.body.dataset.results = JSON.stringify(rows);
+      document.title = passed ? "Detector tests passed" : "Detector tests failed";
+    </script>
+  </body>
+</html>

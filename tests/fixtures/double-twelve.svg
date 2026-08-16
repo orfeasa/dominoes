@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <rect width="640" height="480" fill="#34424d" />
+  <rect x="220" y="30" width="200" height="420" rx="22" fill="#eeeadd" />
+  <path d="M238 240h164" stroke="#3f3f3f" stroke-width="5" stroke-linecap="round" />
+  <defs>
+    <g id="pip-row" fill="#252525">
+      <circle cx="255" cy="0" r="11" />
+      <circle cx="320" cy="0" r="11" />
+      <circle cx="385" cy="0" r="11" />
+    </g>
+  </defs>
+  <use href="#pip-row" y="70" />
+  <use href="#pip-row" y="112" />
+  <use href="#pip-row" y="154" />
+  <use href="#pip-row" y="196" />
+  <use href="#pip-row" y="284" />
+  <use href="#pip-row" y="326" />
+  <use href="#pip-row" y="368" />
+  <use href="#pip-row" y="410" />
+</svg>
