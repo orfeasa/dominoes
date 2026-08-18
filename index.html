@@ -6,9 +6,14 @@
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="color-scheme" content="dark" />
     <meta name="description" content="Point your camera at dominoes and count every visible pip on your device." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pip Count" />
     <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./favicon.ico" sizes="32x32" />
     <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="icon" href="./icons/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-v2.png" />
     <link rel="stylesheet" href="./styles.css" />
     <title>Pip Count</title>
     <script>
@@ -37,7 +42,7 @@
 
         <header class="top-bar">
           <div class="brand-lockup" aria-label="Pip Count">
-            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <img class="brand-mark" src="./icons/logo-mark.svg" alt="" width="28" height="28" />
             <span>Pip Count</span>
           </div>
           <span class="privacy-note">
@@ -49,6 +54,7 @@
         <div class="aiming-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
         <div class="camera-gate" id="camera-gate">
+          <img class="gate-mark" src="./icons/logo-mark.svg" alt="" width="80" height="80" />
           <div class="gate-copy">
             <h1>Count the pips</h1>
             <p id="gate-message">Lay Double-12 or smaller dominoes face-up with a little space between them.</p>
@@ -57,16 +63,16 @@
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.2-2h5.6L16 6h2a2 2 0 0 1 2 2v10H4V8Zm8 8.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /></svg>
             Start camera
           </button>
-          <label class="text-button" for="photo-input">Choose a photo instead</label>
+          <button class="text-button" type="button" data-choose-photo>Choose a photo instead</button>
         </div>
       </section>
 
       <section class="score-dock" id="score-controls" aria-labelledby="score-label">
         <div class="secondary-actions">
-          <label class="icon-button" for="photo-input" title="Choose a photo">
+          <button class="icon-button" type="button" title="Choose a photo" data-choose-photo>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v14H4V5Zm3 11 3.5-4 2.5 3 2-2 2 3H7Zm1-6.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /></svg>
             <span class="sr-only">Choose a photo</span>
-          </label>
+          </button>
           <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
           <button class="icon-button" id="torch-button" type="button" title="Turn flash on" hidden>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m13.2 2-7 11h5.4L10.8 22l7-12h-5.4l.8-8Z" /></svg>

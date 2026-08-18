@@ -10,6 +10,7 @@ const elements = {
   gate: document.querySelector("#camera-gate"),
   gateMessage: document.querySelector("#gate-message"),
   startCamera: document.querySelector("#start-camera"),
+  photoTriggers: document.querySelectorAll("[data-choose-photo]"),
   photoInput: document.querySelector("#photo-input"),
   torchButton: document.querySelector("#torch-button"),
   score: document.querySelector("#score"),
@@ -387,6 +388,7 @@ async function toggleTorch() {
 }
 
 elements.startCamera.addEventListener("click", startCamera);
+for (const trigger of elements.photoTriggers) trigger.addEventListener("click", () => elements.photoInput.click());
 elements.photoInput.addEventListener("change", (event) => loadPhoto(event.target.files?.[0]));
 elements.freezeButton.addEventListener("click", freezeScore);
 elements.decrement.addEventListener("click", () => adjustScore(-1));

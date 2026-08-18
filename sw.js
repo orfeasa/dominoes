@@ -1,13 +1,18 @@
-const CACHE_NAME = "pip-count-v5";
+const CACHE_NAME = "pip-count-v7";
 const APP_SHELL = [
   "./",
   "./styles.css",
   "./app.js",
   "./vision.js",
   "./manifest.webmanifest",
+  "./favicon.ico",
+  "./icons/logo-mark.svg",
   "./icons/icon.svg",
+  "./icons/favicon-32.png",
+  "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png",
+  "./icons/apple-touch-icon-v2.png",
   "./vendor/opencv.js",
 ];
 
